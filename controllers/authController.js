@@ -220,48 +220,48 @@ export const isAuthentication = async (req, res) => {
 }
 
 
-// export const sendResetOtp = async (req, res) => {
+export const sendResetOtp = async (req, res) => {
 
-//     const { email } = req.body;
+    const { email } = req.body;
 
-//     // if(!email){
-//     //     res.json({success:false, message: "Email is required"});
-//     // }
-//     if (!email) {
-//         return res.json({ success: false, message: "Email is required" });
-//     }
+    // if(!email){
+    //     res.json({success:false, message: "Email is required"});
+    // }
+    if (!email) {
+        return res.json({ success: false, message: "Email is required" });
+    }
 
-//     try {
+    try {
 
-//         const user = await userModel.findOne({ email });
+        const user = await userModel.findOne({ email });
 
-//         if (!user) {
-//             res.json({ success: false, message: "User not found" });
-//         }
+        if (!user) {
+            res.json({ success: false, message: "User not found" });
+        }
 
 
-//         const otp = String(Math.floor(100000 + Math.random() * 900000));
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-//         user.resetOtp = otp;
-//         user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
 
-//         await user.save();
+        await user.save();
 
-//         const mailOptions = {
-//             from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
-//             to: user.email,
-//             subject: "Password reset OTP",
-//             text: `Your OTP is resetting your password ${otp}. Use this OTP`
-//         };
+        const mailOptions = {
+            from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
+            to: user.email,
+            subject: "Password reset OTP",
+            text: `Your OTP is resetting your password ${otp}. Use this OTP`
+        };
 
-//         await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
 
-//         return res.json({ success: true, message: "Otp sent to your email" })
+        return res.json({ success: true, message: "Otp sent to your email" })
 
-//     } catch (error) {
-//         return res.json({ success: false, message: message.error });
-//     }
-// }
+    } catch (error) {
+        return res.json({ success: false, message: message.error });
+    }
+}
 
 
 // export const resetPassword = async(req,res) => {
@@ -343,41 +343,41 @@ export const isAuthentication = async (req, res) => {
 // }
 
 
-export const sendResetOtp = async (req, res) => {
-  const { email } = req.body;
+// export const sendResetOtp = async (req, res) => {
+//   const { email } = req.body;
 
-  if (!email) {
-    return res.json({ success: false, message: "Email is required" });
-  }
+//   if (!email) {
+//     return res.json({ success: false, message: "Email is required" });
+//   }
 
-  try {
-    const user = await userModel.findOne({ email });
+//   try {
+//     const user = await userModel.findOne({ email });
 
-    if (!user) {
-      return res.json({ success: false, message: "User not found" });
-    }
+//     if (!user) {
+//       return res.json({ success: false, message: "User not found" });
+//     }
 
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
+//     const otp = String(Math.floor(100000 + Math.random() * 900000));
 
-    user.resetOtp = otp;
-    user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
-    await user.save();
+//     user.resetOtp = otp;
+//     user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+//     await user.save();
 
-    const mailOptions = {
-      from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
-      to: user.email,
-      subject: "Password Reset OTP",
-      text: `Your OTP is ${otp}. It expires in 15 minutes.`,
-    };
+//     const mailOptions = {
+//       from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
+//       to: user.email,
+//       subject: "Password Reset OTP",
+//       text: `Your OTP is ${otp}. It expires in 15 minutes.`,
+//     };
 
-    await transporter.sendMail(mailOptions);
+//     await transporter.sendMail(mailOptions);
 
-    return res.json({ success: true, message: "OTP sent successfully" });
+//     return res.json({ success: true, message: "OTP sent successfully" });
 
-  } catch (error) {
-    return res.json({ success: false, message: error.message });
-  }
-};
+//   } catch (error) {
+//     return res.json({ success: false, message: error.message });
+//   }
+// };
 
 
 export const resetPassword = async (req, res) => {
