@@ -3,6 +3,27 @@ import jwt from "jsonwebtoken"
 import userModel from "../models/userModel.js";
 import transporter from "../config/nodemailer.js";
 
+// Test email function
+export const testEmail = async (req, res) => {
+    try {
+        const mailOptions = {
+            from: `"Auth System Test" <${process.env.SENDER_EMAIL}>`,
+            to: process.env.SENDER_EMAIL, // Send to yourself for testing
+            subject: "Email Test - Auth System",
+            text: `Test email sent at ${new Date().toISOString()}`
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("✅ Test email sent successfully");
+        return res.json({ success: true, message: "Test email sent successfully" });
+
+    } catch (error) {
+        console.error("❌ Test email failed:", error.message);
+        console.error("❌ Full error:", error);
+        return res.json({ success: false, message: "Test email failed: " + error.message });
+    }
+}
+
 //Signup
 export const register = async (req, res) => {
 
@@ -55,6 +76,7 @@ export const register = async (req, res) => {
 
         } catch (mailError) {
             console.error("❌ Welcome Email Error:", mailError.message);
+            console.error("❌ Welcome Email error details:", mailError);
         }
 
         // return res.json({ success: true });
@@ -161,6 +183,7 @@ export const sendverifyOtp = async (req, res) => {
             console.log("✅ Verification OTP sent to:", user.email);
         } catch (mailError) {
             console.error("❌ Email sending failed:", mailError.message);
+            console.error("❌ Email error details:", mailError);
             return res.json({ success: false, message: "Failed to send OTP email: " + mailError.message });
         }
 
@@ -257,6 +280,7 @@ export const sendResetOtp = async (req, res) => {
             console.log("✅ Reset OTP sent to:", user.email);
         } catch (mailError) {
             console.error("❌ Email sending failed:", mailError.message);
+            console.error("❌ Email error details:", mailError);
             return res.json({ success: false, message: "Failed to send OTP email: " + mailError.message });
         }
 
