@@ -344,48 +344,55 @@ export const isAuthentication = async (req, res) => {
 
 
 export const sendResetOtp = async (req, res) => {
+  const { email } = req.body;
 
-    const { email } = req.body;
+  if (!email) {
+    return res.json({ success: false, message: "Email is required" });
+  }
 
-    if (!email) {
-        return res.json({ success: false, message: "Email is required" });
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
     }
 
-    try {
+    // ✅ OTP generate
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    console.log("🔥 GENERATED OTP:", otp);
 
-        const user = await userModel.findOne({ email });
+    user.resetOtp = otp;
+    user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+    await user.save();
 
-        if (!user) {
-            return res.json({ success: false, message: "User not found" });
-        }
+    const mailOptions = {
+      from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
+      
+      // 👉 TEMPORARY TEST EMAIL (baad me change kar lena)
+      to: email, 
+      // to: "yourpersonalemail@gmail.com",
 
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
+      subject: "Password Reset OTP",
+      text: `Your OTP is: ${otp}`,
+    };
 
-        user.resetOtp = otp;
-        user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+    // ✅ RESPONSE PEHLE BHEJO (no timeout issue)
+    res.json({ success: true, message: "OTP sent successfully" });
 
-        await user.save();
+    // ✅ EMAIL SEND WITH FULL DEBUG
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log("❌ MAIL ERROR FULL:", err);
+      } else {
+        console.log("✅ MAIL SENT SUCCESS:", info.response);
+      }
+    });
 
-        const mailOptions = {
-            from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
-            to: user.email,
-            subject: "Password reset OTP",
-            text: `Your OTP is ${otp}`
-        };
-
-        // ⭐ RESPONSE PEHLE BHEJO
-        res.json({ success: true, message: "Otp sent to your email" });
-
-        // ⭐ EMAIL BAAD ME SEND KARO (no timeout)
-        transporter.sendMail(mailOptions)
-          .then(() => console.log("Mail sent"))
-          .catch(err => console.log("Mail error:", err.message));
-
-    } catch (error) {
-        return res.json({ success: false, message: error.message });
-    }
+  } catch (error) {
+    console.log("❌ SERVER ERROR:", error);
+    return res.json({ success: false, message: error.message });
+  }
 };
-
 export const resetPassword = async (req, res) => {
 
     const { email, otp, newPassword } = req.body;
