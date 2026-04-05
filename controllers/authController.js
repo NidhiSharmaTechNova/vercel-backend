@@ -303,6 +303,46 @@ export const isAuthentication = async (req, res) => {
 //    }
 // }
 
+// export const sendResetOtp = async (req, res) => {
+
+//     const { email } = req.body;
+
+//     if (!email) {
+//         return res.json({ success: false, message: "Email is required" });
+//     }
+
+//     try {
+
+//         const user = await userModel.findOne({ email });
+
+//         if (!user) {
+//             return res.json({ success: false, message: "User not found" });
+//         }
+
+//         const otp = String(Math.floor(100000 + Math.random() * 900000));
+
+//         user.resetOtp = otp;
+//         user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
+
+//         await user.save();
+
+//         const mailOptions = {
+//             from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
+//             to: user.email,
+//             subject: "Password reset OTP",
+//             text: `Your OTP is ${otp}`
+//         };
+
+//         await transporter.sendMail(mailOptions);
+
+//         return res.json({ success: true, message: "Otp sent to your email" });
+
+//     } catch (error) {
+//         return res.json({ success: false, message: error.message });
+//     }
+// }
+
+
 export const sendResetOtp = async (req, res) => {
 
     const { email } = req.body;
@@ -333,15 +373,18 @@ export const sendResetOtp = async (req, res) => {
             text: `Your OTP is ${otp}`
         };
 
-        await transporter.sendMail(mailOptions);
+        // ⭐ RESPONSE PEHLE BHEJO
+        res.json({ success: true, message: "Otp sent to your email" });
 
-        return res.json({ success: true, message: "Otp sent to your email" });
+        // ⭐ EMAIL BAAD ME SEND KARO (no timeout)
+        transporter.sendMail(mailOptions)
+          .then(() => console.log("Mail sent"))
+          .catch(err => console.log("Mail error:", err.message));
 
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
-}
-
+};
 
 export const resetPassword = async (req, res) => {
 
