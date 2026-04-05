@@ -40,7 +40,7 @@ app.use(cors({
 }));
 
 app.get('/',(req, res)=>{
-   res.send('API woring fine')
+   res.send('API working fine')
 })
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
