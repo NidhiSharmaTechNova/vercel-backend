@@ -55,7 +55,15 @@ import jwt from "jsonwebtoken";
 
 export const userAuth = (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Try to get token from Authorization header first, then from cookies
+    let token = req.cookies.token;
+    
+    if (!token && req.headers.authorization) {
+      const authHeader = req.headers.authorization;
+      if (authHeader.startsWith('Bearer ')) {
+        token = authHeader.slice(7); // Remove 'Bearer ' prefix
+      }
+    }
 
     if (!token) {
       return res.json({ success: false, message: "No token provided" });
@@ -68,6 +76,7 @@ export const userAuth = (req, res, next) => {
     next();
 
   } catch (error) {
+    console.error("❌ Auth middleware error:", error.message);
     return res.json({ success: false, message: error.message });
   }
 };
