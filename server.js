@@ -11,11 +11,18 @@ const app = express();
 const port = process.env.PORT || 4000;
 connectdb();
 
-const allowedOrigins = ['http://localhost:5173']
+// const allowedOrigins = ['https://vercel-frontend-three-olive.vercel.app']
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin: allowedOrigins , credentials: true}));
+// app.use(cors({origin: allowedOrigins , credentials: true}));
+app.use(cors({
+  allowedOrigins: [
+    "http://localhost:5173",
+    "https://vercel-frontend-three-olive.vercel.app"
+  ],
+  credentials: true
+}));
 
 app.get('/',(req, res)=>{
    res.send('API woring fine')
