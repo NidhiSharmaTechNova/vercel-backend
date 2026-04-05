@@ -72,6 +72,8 @@ export const userAuth = (req, res, next) => {
   }
 };
 
+export default userAuth;
+
 // import jwt from 'jsonwebtoken';
 
 // const userAuth = async (req, res, next) => {
