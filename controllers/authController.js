@@ -357,9 +357,7 @@ export const sendResetOtp = async (req, res) => {
       return res.json({ success: false, message: "User not found" });
     }
 
-    // ✅ OTP generate
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-    console.log("🔥 GENERATED OTP:", otp);
 
     user.resetOtp = otp;
     user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
@@ -367,32 +365,21 @@ export const sendResetOtp = async (req, res) => {
 
     const mailOptions = {
       from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
-      
-      // 👉 TEMPORARY TEST EMAIL (baad me change kar lena)
-      to: user.email, 
-      // to: "yourpersonalemail@gmail.com",
-
+      to: user.email,
       subject: "Password Reset OTP",
-      text: `Your OTP is: ${otp}`,
+      text: `Your OTP is ${otp}. It expires in 15 minutes.`,
     };
 
-    // ✅ RESPONSE PEHLE BHEJO (no timeout issue)
-    res.json({ success: true, message: "OTP sent successfully" });
+    await transporter.sendMail(mailOptions);
 
-    // ✅ EMAIL SEND WITH FULL DEBUG
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log("❌ MAIL ERROR FULL:", err);
-      } else {
-        console.log("✅ MAIL SENT SUCCESS:", info.response);
-      }
-    });
+    return res.json({ success: true, message: "OTP sent successfully" });
 
   } catch (error) {
-    console.log("❌ SERVER ERROR:", error);
     return res.json({ success: false, message: error.message });
   }
 };
+
+
 export const resetPassword = async (req, res) => {
 
     const { email, otp, newPassword } = req.body;
@@ -411,7 +398,7 @@ export const resetPassword = async (req, res) => {
             return res.json({ success: false, message: "User not found" });
         }
 
-        if (user.resetOtp === '' || user.resetOtp !== otp) {
+        if (!user.resetOtp || user.resetOtp.toString() !== otp.toString()) {
             return res.json({ success: false, message: "Invalid OTP" });
         }
 
