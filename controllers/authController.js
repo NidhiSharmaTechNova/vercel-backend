@@ -35,8 +35,9 @@ export const register = async (req, res) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            // secure: process.env.NODE_ENV === 'production',
+            secure:true,
+            sameSite: 'None',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -104,8 +105,8 @@ export const login = async (req, res) => {
         // })
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // ✅ FIX
+            secure: true,
+            sameSite:'None', 
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -122,9 +123,9 @@ export const logout = async (req, res) => {
     try {
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', //string
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            secure: true,
+            sameSite: 'None',
+            // maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         return res.json({ success: true, message: "Logged Out " })
@@ -136,7 +137,7 @@ export const logout = async (req, res) => {
 //sendverify OTP 
 export const sendverifyOtp = async (req, res) => {
     try {
-        const userId = req.userId; // ✅ FIX
+        const userId = req.userId; 
 
         const user = await userModel.findById(userId);
 
@@ -346,7 +347,7 @@ export const resetPassword = async (req, res) => {
 
     const { email, otp, newPassword } = req.body;
 
-    console.log("BODY:", req.body); // ✅ debug
+    console.log("BODY:", req.body); 
 
     if (!email || !otp || !newPassword) {
         return res.json({ success: false, message: "Email, OTP and newPassword are required" });
