@@ -369,7 +369,7 @@ export const sendResetOtp = async (req, res) => {
       from: `"Auth System" <${process.env.SENDER_EMAIL}>`,
       
       // 👉 TEMPORARY TEST EMAIL (baad me change kar lena)
-      to: email, 
+      to: user.email, 
       // to: "yourpersonalemail@gmail.com",
 
       subject: "Password Reset OTP",
